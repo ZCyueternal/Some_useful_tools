@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>RGB颜色值与十六进制颜色码转换</title>
+        <style>
+            input {
+                width: 100px;
+            }
+            .hex-color,.rgb-color {
+                width: 100px;
+                height: 100px;
+                border: 1px solid salmon;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>RGB & 十六进制</h1>
+        <div>
+            <h3>Task 01: RGB颜色值转换成十六进制颜色码：</h3>
+            <div>
+                <input type="text" name="rgbNum" value="0" maxlength="3">
+                <input type="text" name="rgbNum" value="0" maxlength="3">
+                <input type="text" name="rgbNum" value="0" maxlength="3">
+                <button onclick="hexAdecimalColorCode()">转换</button>
+            </div>
+            <div>
+                <h4>
+                    Task 01 results: &nbsp &nbsp &nbsp &nbsp <span class="hex-code"></span>
+                </h4>
+                <div class="hex-color"></div>
+            </div>
+        </div>
+        <div>
+            <h3>Task 02: 十六进制颜色码转换成RGB颜色值：</h3>
+            <div>
+                <input type="text" name="hexStr" value="#000000">
+                <button onclick="rgbColorCode()">转换</button>
+            </div>
+            <div>
+                <h4>
+                    Task 02 results: &nbsp &nbsp &nbsp &nbsp <span class="rgb-code"></span>
+                </h4>
+                <div class="rgb-color"></div>
+            </div>
+        </div>
+        <script>
+            function hexAdecimalColorCode() {
+                let rgbNumDom = document.getElementsByName("rgbNum");
+                let arr = [];
+                for (let i = 0; i < 3; i++) {
+                    let rn = rgbNumDom[i].value;
+                    if (isNaN(parseInt(rn))) {
+                        return alert("请输入数字");
+                    } else if(parseInt(rn) > 255 || parseInt(rn) < 0) {
+                        return alert("数字在0-255之间");
+                    }
+                    arr.push(rn);
+                }
+                if(arr.length !== 3) {
+                    return alert("RGB颜色值不合法");
+                }
+                // 核心转换为16进制的操作
+                let hexStr = (arr[0] << 16 | arr[1] << 8 | arr[2]).toString(16);
+                // 补零
+                if(hexStr.length < 6) {
+                    hexStr = `0${new Array((6 - hexStr.length)).join("0")}${hexStr}`;
+                    console.log("进入补零：", hexStr);
+                }
+                let hexCode = `#${hexStr}`;
+                document.querySelector(".hex-code").innerHTML = hexCode;
+                document.querySelector(".hex-color").style.backgroundColor = hexCode;
+                return hexCode;
+            }
+            function rgbColorCode() {
+                let hs = document.getElementsByName("hexStr")[0].value;
+                if (hs.substr(0, 1) === "#"){
+                    hs = hs.substring(1);
+                    if (hs.length !== 3 && hs.length !== 6){
+                        return alert("十六进制颜色码为三位或六位");
+                    } else if (/[^0-9a-f]/i.test(hs)){
+                        return alert("请输入正确的十六进制颜色码");
+                    }
+                } else {
+                    return alert("十六进制颜色码不合法");
+                }
+                let hsArr = hs.toLowerCase().split("");
+                console.log("hsArr--->", hsArr);
+                let arr = [];
+                if(hs.length === 3) {
+                    // 十六进制转为十进制
+                    arr = hsArr.map(el => parseInt((el + el), 16));
+                    console.log("arr--->", arr);
+                } else {
+                    const [a, b, c, d, e, f] = hsArr;
+                    arr = [a + b, c + d, e + f].map(el => parseInt(el, 16));
+                    console.log("arr--6-->", arr);
+                }
+                let rgbCode = `RGB(${arr.join(",")})`;
+                console.log(rgbCode);
+                document.querySelector(".rgb-code").innerHTML = rgbCode;
+                document.querySelector(".rgb-color").style.backgroundColor = rgbCode;
+                return rgbCode;
+            }
+        </script>
+    </body>
+</html>
